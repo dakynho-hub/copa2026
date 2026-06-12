@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Copa do Mundo 2026</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+:root{
+  --g:#006633;
+  --y:#F4C10F;
+  --b:#003F88;
+  --bg:#060F1A;
+  --card:#0D1E2C;
+  --card2:#111F2E;
+  --border:rgba(244,193,15,0.18);
+  --text:#B8D0E2;
+  --muted:#4A6A80;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(170deg,#001A0A 0%,#001030 55%,#060F1A 100%);
+  padding:env(safe-area-inset-top,20px) 20px 28px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+.hero::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%, rgba(244,193,15,0.12) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+.hero-ball{
+  font-size:54px;
+  line-height:1;
+  margin-bottom:10px;
+  display:inline-block;
+  animation:spin 8s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.hero h1{
+  font-size:clamp(28px,8vw,42px);
+  font-weight:800;
+  letter-spacing:-0.5px;
+  color:#fff;
+  line-height:1.05;
+}
+
+.hero h1 span{color:var(--y)}
+
+.hero-sub{
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+.hero-pills{
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  margin-top:16px;
+  flex-wrap:wrap;
+}
+
+.pill{
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;
+  padding:5px 12px;
+  font-size:11px;
+  font-weight:600;
+  color:#99BBCC;
+}
+
+.pill.br{background:rgba(0,102,51,0.25);border-color:rgba(0,102,51,0.5);color:#44DD88}
+
+/* ── TABS ── */
+.tabs{
+  display:flex;
+  background:var(--card);
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:100;
+  overflow-x:auto;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+}
+.tabs::-webkit-scrollbar{display:none}
+
+.tab{
+  flex:none;
+  padding:14px 18px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--muted);
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  white-space:nowrap;
+  transition:color .2s, border-color .2s;
+  user-select:none;
+}
+
+.tab.active{
+  color:var(--y);
+  border-bottom-color:var(--y);
+}
+
+/* ── SECTIONS ── */
+.section{display:none;padding:16px 16px 80px}
+.section.active{display:block}
+
+/* ── GRUPOS ── */
+.grupos-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.grupo-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px;
+  position:relative;
+  overflow:hidden;
+}
+
+.grupo-card.has-brasil{
+  border-color:rgba(244,193,15,0.45);
+  background:linear-gradient(135deg,rgba(0,100,50,0.15) 0%,var(--card) 60%);
+}
+
+.grupo-letter{
+  position:absolute;
+  top:-6px;right:8px;
+  font-size:48px;
+  font-weight:900;
+  color:rgba(255,255,255,0.04);
+  line-height:1;
+  pointer-events:none;
+}
+
+.grupo-title{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--y);
+  margin-bottom:10px;
+}
+
+.grupo-teams{display:flex;flex-direction:column;gap:5px}
+
+.team-row{
+  font-size:12px;
+  font-weight:500;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.team-row.brasil-row{color:var(--y);font-weight:700}
+.team-row.rep-row{color:var(--muted);font-size:11px;font-style:italic}
+
+.team-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--g);flex-shrink:0;
+}
+.brasil-row .team-dot{background:var(--y)}
+.rep-row .team-dot{background:var(--muted)}
+
+/* ── JOGOS ── */
+.rodada-label{
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--b);
+  color:#5588BB;
+  padding:20px 0 10px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.rodada-label::after{
+  content:'';flex:1;height:1px;
+  background:linear-gradient(90deg,rgba(85,136,187,0.3),transparent);
+}
+
+.dia-label{
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:14px 0 6px;
+}
+
+.jogos-list{display:flex;flex-direction:column;gap:7px}
+
+.jogo{
+  background:var(--card);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition:transform .15s, border-color .15s;
+  cursor:default;
+}
+
+.jogo:active{transform:scale(0.98)}
+
+.jogo.brasil-jogo{
+  background:linear-gradient(90deg,rgba(0,102,51,0.18) 0%,var(--card) 100%);
+  border-color:rgba(244,193,15,0.35);
+}
+
+.jogo-hora{
+  font-size:18px;
+  font-weight:800;
+  color:var(--y);
+  min-width:38px;
+  line-height:1;
+  letter-spacing:-0.5px;
+}
+
+.jogo-mid{flex:1;min-width:0}
+
+.jogo-times{
+  font-size:14px;
+  font-weight:600;
+  color:#D0E8F5;
+  line-height:1.3;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.jogo.brasil-jogo .jogo-times{color:#FFE87C}
+
+.jogo-local{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:3px;
+  display:flex;
+  align-items:center;
+  gap:3px;
+}
+
+.br-tag{
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#33CC77;
+  background:rgba(0,102,51,0.25);
+  border:1px solid rgba(0,102,51,0.4);
+  border-radius:5px;
+  padding:2px 6px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+
+/* ── BRASIL TAB ── */
+.brasil-hero{
+  background:linear-gradient(135deg,rgba(0,102,51,0.3) 0%,rgba(0,63,136,0.3) 100%);
+  border:1px solid rgba(244,193,15,0.3);
+  border-radius:18px;
+  padding:20px;
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.brasil-flag{font-size:48px;margin-bottom:8px}
+
+.brasil-hero h2{
+  font-size:22px;font-weight:800;color:var(--y);
+}
+
+.brasil-hero p{font-size:13px;color:var(--text);margin-top:6px}
+
+.brasil-jogo-card{
+  background:linear-gradient(135deg,rgba(0,102,51,0.2) 0%,var(--card) 100%);
+  border:1px solid rgba(244,193,15,0.35);
+  border-radius:16px;
+  padding:18px;
+  margin-bottom:12px;
+}
+
+.bjc-round{
+  font-size:10px;font-weight:800;letter-spacing:2px;
+  text-transform:uppercase;color:#33CC77;
+  background:rgba(0,102,51,0.2);
+  border-radius:6px;padding:3px 8px;
+  display:inline-block;margin-bottom:10px;
+}
+
+.bjc-match{
+  font-size:20px;font-weight:800;color:#FFE87C;
+  margin-bottom:4px;
+}
+
+.bjc-info{
+  font-size:13px;color:var(--text);
+  display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;
+}
+
+.bjc-info span{display:flex;align-items:center;gap:4px}
+
+/* ── BOTTOM NAV feel ── */
+.bottom-safe{height:env(safe-area-inset-bottom,16px)}
+
+/* ── FILTER BAR (jogos) ── */
+.filter-bar{
+  display:flex;gap:8px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;
+}
+.filter-bar::-webkit-scrollbar{display:none}
+
+.filter-btn{
+  flex:none;
+  padding:6px 14px;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:transparent;
+  color:var(--muted);
+  font-size:12px;font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+  font-family:inherit;
+}
+
+.filter-btn.on{
+  background:var(--y);
+  border-color:var(--y);
+  color:#060F1A;
+}
+
+/* animate sections in */
+.section.active > *{
+  animation:fadeUp .3s ease both;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-ball">⚽</div>
+  <h1>Copa do Mundo<br><span>2026</span></h1>
+  <p class="hero-sub">EUA · Canadá · México</p>
+  <div class="hero-pills">
+    <span class="pill">48 seleções</span>
+    <span class="pill">12 grupos</span>
+    <span class="pill">104 jogos</span>
+    <span class="pill br">🇧🇷 Grupo C</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('brasil')">🇧🇷 Brasil</div>
+  <div class="tab" onclick="showTab('grupos')">Grupos</div>
+  <div class="tab" onclick="showTab('jogos')">Todos os Jogos</div>
+</div>
+
+<!-- ── BRASIL ── -->
+<div id="brasil" class="section active">
+  <div class="brasil-hero">
+    <div class="brasil-flag">🇧🇷</div>
+    <h2>Seleção Brasileira</h2>
+    <p>Grupo C · Cabeça de chave</p>
+  </div>
+
+  <div class="brasil-jogo-card">
+    <div class="bjc-round">1ª Rodada</div>
+    <div class="bjc-match">Brasil × Marrocos 🇲🇦</div>
+    <div class="bjc-info">
+      <span>📅 13 de Junho (Sáb)</span>
+      <span>🕖 19h (Brasília)</span>
+      <span>📍 Nova York / NJ</span>
+    </div>
+  </div>
+
+  <div class="brasil-jogo-card">
+    <div class="bjc-round">2ª Rodada</div>
+    <div class="bjc-match">Brasil × Haiti 🇭🇹</div>
+    <div class="bjc-info">
+      <span>📅 19 de Junho (Sex)</span>
+      <span>🕙 22h (Brasília)</span>
+      <span>📍 Filadélfia</span>
+    </div>
+  </div>
+
+  <div class="brasil-jogo-card">
+    <div class="bjc-round">3ª Rodada</div>
+    <div class="bjc-match">Brasil × Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
+    <div class="bjc-info">
+      <span>📅 24 de Junho (Qua)</span>
+      <span>⏰ Horário a confirmar</span>
+    </div>
+  </div>
+
+  <div class="rodada-label">Adversários do Grupo C</div>
+  <div class="jogos-list">
+    <div class="jogo">
+      <div class="jogo-hora">—</div>
+      <div class="jogo-mid">
+        <div class="jogo-times">🇲🇦 Marrocos</div>
+        <div class="jogo-local">Semi-finalista da Copa 2022</div>
+      </div>
+    </div>
+    <div class="jogo">
+      <div class="jogo-hora">—</div>
+      <div class="jogo-mid">
+        <div class="jogo-times">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Escócia</div>
+        <div class="jogo-local">Retorna à Copa após 28 anos</div>
+      </div>
+    </div>
+    <div class="jogo">
+      <div class="jogo-hora">—</div>
+      <div class="jogo-mid">
+        <div class="jogo-times">🇭🇹 Haiti</div>
+        <div class="jogo-local">Estreante na Copa do Mundo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── GRUPOS ── -->
+<div id="grupos" class="section">
+  <div class="grupos-grid">
+
+    <div class="grupo-card">
+      <div class="grupo-letter">A</div>
+      <div class="grupo-title">Grupo A</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>México</div>
+        <div class="team-row"><span class="team-dot"></span>África do Sul</div>
+        <div class="team-row"><span class="team-dot"></span>Coreia do Sul</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Europa D*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">B</div>
+      <div class="grupo-title">Grupo B</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Canadá</div>
+        <div class="team-row"><span class="team-dot"></span>Catar</div>
+        <div class="team-row"><span class="team-dot"></span>Suíça</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Europa A*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card has-brasil">
+      <div class="grupo-letter">C</div>
+      <div class="grupo-title">Grupo C 🏆</div>
+      <div class="grupo-teams">
+        <div class="team-row brasil-row"><span class="team-dot"></span>🇧🇷 Brasil</div>
+        <div class="team-row"><span class="team-dot"></span>Marrocos</div>
+        <div class="team-row"><span class="team-dot"></span>Haiti</div>
+        <div class="team-row"><span class="team-dot"></span>Escócia</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">D</div>
+      <div class="grupo-title">Grupo D</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Estados Unidos</div>
+        <div class="team-row"><span class="team-dot"></span>Paraguai</div>
+        <div class="team-row"><span class="team-dot"></span>Austrália</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Europa C*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">E</div>
+      <div class="grupo-title">Grupo E</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Alemanha</div>
+        <div class="team-row"><span class="team-dot"></span>Curaçao</div>
+        <div class="team-row"><span class="team-dot"></span>Costa do Marfim</div>
+        <div class="team-row"><span class="team-dot"></span>Equador</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">F</div>
+      <div class="grupo-title">Grupo F</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Holanda</div>
+        <div class="team-row"><span class="team-dot"></span>Japão</div>
+        <div class="team-row"><span class="team-dot"></span>Tunísia</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Europa B*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">G</div>
+      <div class="grupo-title">Grupo G</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Bélgica</div>
+        <div class="team-row"><span class="team-dot"></span>Egito</div>
+        <div class="team-row"><span class="team-dot"></span>Irã</div>
+        <div class="team-row"><span class="team-dot"></span>Nova Zelândia</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">H</div>
+      <div class="grupo-title">Grupo H</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Espanha</div>
+        <div class="team-row"><span class="team-dot"></span>Cabo Verde</div>
+        <div class="team-row"><span class="team-dot"></span>Arábia Saudita</div>
+        <div class="team-row"><span class="team-dot"></span>Uruguai</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">I</div>
+      <div class="grupo-title">Grupo I</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>França</div>
+        <div class="team-row"><span class="team-dot"></span>Senegal</div>
+        <div class="team-row"><span class="team-dot"></span>Noruega</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Repescagem 2*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">J</div>
+      <div class="grupo-title">Grupo J</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Argentina</div>
+        <div class="team-row"><span class="team-dot"></span>Argélia</div>
+        <div class="team-row"><span class="team-dot"></span>Áustria</div>
+        <div class="team-row"><span class="team-dot"></span>Jordânia</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">K</div>
+      <div class="grupo-title">Grupo K</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Portugal</div>
+        <div class="team-row"><span class="team-dot"></span>Uzbequistão</div>
+        <div class="team-row"><span class="team-dot"></span>Colômbia</div>
+        <div class="team-row rep-row"><span class="team-dot"></span>Repescagem 1*</div>
+      </div>
+    </div>
+
+    <div class="grupo-card">
+      <div class="grupo-letter">L</div>
+      <div class="grupo-title">Grupo L</div>
+      <div class="grupo-teams">
+        <div class="team-row"><span class="team-dot"></span>Inglaterra</div>
+        <div class="team-row"><span class="team-dot"></span>Croácia</div>
+        <div class="team-row"><span class="team-dot"></span>Gana</div>
+        <div class="team-row"><span class="team-dot"></span>Panamá</div>
+      </div>
+    </div>
+
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.5">* Vagas ainda a definir via playoff de repescagem da UEFA e Repescagem Mundial da FIFA.</p>
+</div>
+
+<!-- ── TODOS OS JOGOS ── -->
+<div id="jogos" class="section">
+
+  <div class="filter-bar">
+    <button class="filter-btn on" onclick="filterJogos('todos',this)">Todos</button>
+    <button class="filter-btn" onclick="filterJogos('brasil',this)">🇧🇷 Brasil</button>
+    <button class="filter-btn" onclick="filterJogos('r1',this)">1ª Rodada</button>
+    <button class="filter-btn" onclick="filterJogos('r2',this)">2ª Rodada</button>
+    <button class="filter-btn" onclick="filterJogos('r3',this)">3ª Rodada</button>
+  </div>
+
+  <!-- 1ª RODADA -->
+  <div class="rodada-label r1-label">1ª Rodada</div>
+
+  <div class="dia-label r1">11 Jun · Quinta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">México × África do Sul</div><div class="jogo-local">📍 Cidade do México</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">23h</div><div class="jogo-mid"><div class="jogo-times">Coreia do Sul × Europa D</div><div class="jogo-local">📍 Guadalajara</div></div></div>
+  </div>
+
+  <div class="dia-label r1">12 Jun · Sexta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Canadá × Europa A</div><div class="jogo-local">📍 Toronto</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">Estados Unidos × Paraguai</div><div class="jogo-local">📍 Los Angeles</div></div></div>
+  </div>
+
+  <div class="dia-label r1">13 Jun · Sábado</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">1h</div><div class="jogo-mid"><div class="jogo-times">Austrália × Europa C</div><div class="jogo-local">📍 Vancouver</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Catar × Suíça</div><div class="jogo-local">📍 San Francisco</div></div></div>
+    <div class="jogo r1 brasil-jogo" data-tags="r1 brasil"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">🇧🇷 Brasil × Marrocos</div><div class="jogo-local">📍 Nova York / NJ</div></div><span class="br-tag">🇧🇷</span></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">Haiti × Escócia</div><div class="jogo-local">📍 Boston</div></div></div>
+  </div>
+
+  <div class="dia-label r1">14 Jun · Domingo</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">14h</div><div class="jogo-mid"><div class="jogo-times">Alemanha × Curaçao</div><div class="jogo-local">📍 Houston</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">17h</div><div class="jogo-mid"><div class="jogo-times">Holanda × Japão</div><div class="jogo-local">📍 Dallas</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">20h</div><div class="jogo-mid"><div class="jogo-times">Costa do Marfim × Equador</div><div class="jogo-local">📍 Filadélfia</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">23h</div><div class="jogo-mid"><div class="jogo-times">Europa B × Tunísia</div><div class="jogo-local">📍 Monterrey</div></div></div>
+  </div>
+
+  <div class="dia-label r1">15 Jun · Segunda-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">13h</div><div class="jogo-mid"><div class="jogo-times">Espanha × Cabo Verde</div><div class="jogo-local">📍 Atlanta</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Bélgica × Egito</div><div class="jogo-local">📍 Seattle</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">Arábia Saudita × Uruguai</div><div class="jogo-local">📍 Miami</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">Irã × Nova Zelândia</div><div class="jogo-local">📍 Los Angeles</div></div></div>
+  </div>
+
+  <div class="dia-label r1">16 Jun · Terça-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">14h</div><div class="jogo-mid"><div class="jogo-times">Argentina × Argélia</div><div class="jogo-local">📍 Kansas City</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">França × Senegal</div><div class="jogo-local">📍 Nova York / NJ</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">Repescagem 2 × Noruega</div><div class="jogo-local">📍 Boston</div></div></div>
+  </div>
+
+  <div class="dia-label r1">17 Jun · Quarta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">1h</div><div class="jogo-mid"><div class="jogo-times">Áustria × Jordânia</div><div class="jogo-local">📍 San Francisco</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">14h</div><div class="jogo-mid"><div class="jogo-times">Portugal × Repescagem 1</div><div class="jogo-local">📍 Houston</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">17h</div><div class="jogo-mid"><div class="jogo-times">Inglaterra × Croácia</div><div class="jogo-local">📍 Dallas</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">20h</div><div class="jogo-mid"><div class="jogo-times">Gana × Panamá</div><div class="jogo-local">📍 Toronto</div></div></div>
+    <div class="jogo r1" data-tags="r1"><div class="jogo-hora">23h</div><div class="jogo-mid"><div class="jogo-times">Uzbequistão × Colômbia</div><div class="jogo-local">📍 Cidade do México</div></div></div>
+  </div>
+
+  <!-- 2ª RODADA -->
+  <div class="rodada-label r2-label">2ª Rodada</div>
+
+  <div class="dia-label r2">18 Jun · Quinta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">13h</div><div class="jogo-mid"><div class="jogo-times">Europa D × África do Sul</div><div class="jogo-local">📍 Atlanta</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Suíça × Europa A</div><div class="jogo-local">📍 Los Angeles</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">Canadá × Catar</div><div class="jogo-local">📍 Vancouver</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">México × Coreia do Sul</div><div class="jogo-local">📍 Guadalajara</div></div></div>
+  </div>
+
+  <div class="dia-label r2">19 Jun · Sexta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">1h</div><div class="jogo-mid"><div class="jogo-times">Europa C × Paraguai</div><div class="jogo-local">📍 San Francisco</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Estados Unidos × Austrália</div><div class="jogo-local">📍 Seattle</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">Escócia × Marrocos</div><div class="jogo-local">📍 Boston</div></div></div>
+    <div class="jogo r2 brasil-jogo" data-tags="r2 brasil"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">🇧🇷 Brasil × Haiti</div><div class="jogo-local">📍 Filadélfia</div></div><span class="br-tag">🇧🇷</span></div>
+  </div>
+
+  <div class="dia-label r2">20 Jun · Sábado</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">14h</div><div class="jogo-mid"><div class="jogo-times">Holanda × Europa B</div><div class="jogo-local">📍 Houston</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">17h</div><div class="jogo-mid"><div class="jogo-times">Alemanha × Costa do Marfim</div><div class="jogo-local">📍 Toronto</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">21h</div><div class="jogo-mid"><div class="jogo-times">Equador × Curaçao</div><div class="jogo-local">📍 Kansas City</div></div></div>
+  </div>
+
+  <div class="dia-label r2">21 Jun · Domingo</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">1h</div><div class="jogo-mid"><div class="jogo-times">Tunísia × Japão</div><div class="jogo-local">📍 Monterrey</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">13h</div><div class="jogo-mid"><div class="jogo-times">Espanha × Arábia Saudita</div><div class="jogo-local">📍 Atlanta</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">16h</div><div class="jogo-mid"><div class="jogo-times">Bélgica × Irã</div><div class="jogo-local">📍 Los Angeles</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">19h</div><div class="jogo-mid"><div class="jogo-times">Uruguai × Cabo Verde</div><div class="jogo-local">📍 Miami</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">22h</div><div class="jogo-mid"><div class="jogo-times">Nova Zelândia × Egito</div><div class="jogo-local">📍 Vancouver</div></div></div>
+  </div>
+
+  <div class="dia-label r2">22 Jun · Segunda-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">14h</div><div class="jogo-mid"><div class="jogo-times">Argentina × Áustria</div><div class="jogo-local">📍 Dallas</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">18h</div><div class="jogo-mid"><div class="jogo-times">França × Repescagem 2</div><div class="jogo-local">📍 Filadélfia</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">21h</div><div class="jogo-mid"><div class="jogo-times">Noruega × Senegal</div><div class="jogo-local">📍 Nova York / NJ</div></div></div>
+  </div>
+
+  <div class="dia-label r2">23 Jun · Terça-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">0h</div><div class="jogo-mid"><div class="jogo-times">Jordânia × Argélia</div><div class="jogo-local">📍 San Francisco</div></div></div>
+    <div class="jogo r2" data-tags="r2"><div class="jogo-hora">17h</div><div class="jogo-mid"><div class="jogo-times">Inglaterra × Gana</div><div class="jogo-local">📍 Boston</div></div></div>
+  </div>
+
+  <!-- 3ª RODADA -->
+  <div class="rodada-label r3-label">3ª Rodada</div>
+
+  <div class="dia-label r3">24 Jun · Quarta-feira</div>
+  <div class="jogos-list">
+    <div class="jogo r3 brasil-jogo" data-tags="r3 brasil"><div class="jogo-hora">—</div><div class="jogo-mid"><div class="jogo-times">🇧🇷 Brasil × Escócia</div><div class="jogo-local">⏰ Horário a confirmar</div></div><span class="br-tag">🇧🇷</span></div>
+  </div>
+  <p style="font-size:11px;color:var(--muted);margin-top:14px;line-height:1.6">⏰ Horários da 3ª rodada e demais jogos serão confirmados pela FIFA em breve.</p>
+
+</div>
+
+<div class="bottom-safe"></div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function filterJogos(f, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+
+  const allJogos = document.querySelectorAll('#jogos .jogo');
+  const allDias = document.querySelectorAll('#jogos .dia-label');
+  const allRodadas = document.querySelectorAll('#jogos .rodada-label');
+
+  if(f === 'todos'){
+    allJogos.forEach(j=>j.style.display='');
+    allDias.forEach(d=>d.style.display='');
+    allRodadas.forEach(r=>r.style.display='');
+    return;
+  }
+
+  allJogos.forEach(j=>{
+    const tags = j.getAttribute('data-tags')||'';
+    j.style.display = tags.includes(f) ? '' : 'none';
+  });
+
+  // Hide empty dia labels
+  allDias.forEach(d=>{
+    const cls = [...d.classList].find(c=>c==='r1'||c==='r2'||c==='r3');
+    if(!cls){return;}
+    if(f==='brasil'){
+      // check if next sibling jogos-list has any visible jogo
+      let next = d.nextElementSibling;
+      let hasVisible = false;
+      while(next && next.classList.contains('jogos-list')){
+        hasVisible = hasVisible || [...next.querySelectorAll('.jogo')].some(j=>j.style.display!=='none');
+        next = next.nextElementSibling;
+      }
+      d.style.display = hasVisible ? '' : 'none';
+    } else {
+      d.style.display = d.classList.contains(f) ? '' : 'none';
+    }
+  });
+
+  allRodadas.forEach(r=>{
+    const cls = [...r.classList].find(c=>c.endsWith('-label'));
+    const round = cls ? cls.replace('-label','') : '';
+    if(f==='brasil'){
+      r.style.display = '';
+    } else {
+      r.style.display = round === f ? '' : 'none';
+    }
+  });
+}
+</script>
+</body>
+</html>
